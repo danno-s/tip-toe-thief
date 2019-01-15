@@ -2,11 +2,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class ChinchillaLogic : MonoBehaviour {
 
-	public TipTopThiefLogic GameLogic;
+  // Game Objects Begin
+	public TipToeThiefLogic GameLogic;
 	public Grid GameGrid;
+  public Tilemap PlayerLayer;
+  // Game Objects End
+
+  // Settings Begin
+  public float speed;
+  // Settings End
+
+  // Debug Settings Begin
+  public bool useIntegerMovement;
+  // Debug Settings End
+
+  private Rigidbody2D rgbd;
   private Vector3 centerOffset;
   private Vector3Int cellPos;
 
@@ -14,6 +29,8 @@ public class ChinchillaLogic : MonoBehaviour {
 	void Start () {
     centerOffset = new Vector3(0.5f, 0.5f, 0);
     cellPos = GameGrid.WorldToCell(transform.position);
+
+    rgbd = GetComponent<Rigidbody2D>();
   }
 	
 	// Update is called once per frame
@@ -21,24 +38,40 @@ public class ChinchillaLogic : MonoBehaviour {
     if(Input.GetKeyDown(KeyCode.Space))
       GameLogic.ToggleLights();
 
-    if(Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-      cellPos += new Vector3Int(-1, 0, 0);
 
-    if(Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-      cellPos += new Vector3Int(1, 0, 0);
+    if (useIntegerMovement) {
+      var oldCellPos = cellPos;
 
-    if(Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
-      cellPos += new Vector3Int(0, 1, 0);
+      if(Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+        cellPos += Vector3Int.left;
 
-    if(Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-      cellPos += new Vector3Int(0, -1, 0);
+      if(Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+        cellPos += Vector3Int.right;
 
+      if(Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        cellPos += Vector3Int.up;
 
-    transform.position = GameGrid.CellToWorld(cellPos) + centerOffset;
+      if(Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        cellPos += Vector3Int.down;
+
+      // Check if new position is valid.
+      if(!PlayerLayer.GetTile(cellPos)) {
+        transform.position = GameGrid.CellToWorld(cellPos) + centerOffset;
+      } else {
+        cellPos = oldCellPos;
+      }
+    } else {
+      rgbd.velocity = new Vector2(Input.GetAxis("Horizontal") * speed,
+                                  Input.GetAxis("Vertical") * speed);
+    }
   }
 
   private void OnDrawGizmos () {
     Gizmos.color = Color.magenta;
     Gizmos.DrawCube(transform.position, new Vector3(1, 1, 1));
+  }
+
+  private void OnCollisionEnter2D(Collision2D collision) {
+    Debug.Log(collision);
   }
 }
