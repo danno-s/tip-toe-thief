@@ -8,6 +8,7 @@ public class TipToeThiefGuardPatrolPoint : MonoBehaviour {
   public Color handleColor;
 
   private void OnDrawGizmos() {
+#if UNITY_EDITOR
     Handles.color = handleColor;
     Handles.DrawSolidArc(
       transform.position,
@@ -16,5 +17,6 @@ public class TipToeThiefGuardPatrolPoint : MonoBehaviour {
       45,
       5
     );
+#endif
   }
 }

@@ -12,5 +12,7 @@ public enum GuardState {
   Waiting,
   RotatingTowards,
   Moving,
-  LookingTowards
+  LookingTowards,
+  PlayerSpotted,
+  Distracted
 }

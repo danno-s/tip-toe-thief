@@ -51,6 +51,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9532525b413153740935bf71b63d24bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameCamera: {fileID: 0}
+  gameCamera: {fileID: 0}
   normalClipPlane: 1000
   contrastClipPlane: 1
+  contrastMaximum: 1000
+  contrastMinimum: 1
+  contrastFactor: 25

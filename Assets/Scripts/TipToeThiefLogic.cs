@@ -2,16 +2,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TipToeThiefLogic : MonoBehaviour {
 
-  public Camera GameCamera;
-  public float normalClipPlane, contrastClipPlane;
+  public Camera gameCamera;
+  public float normalClipPlane,
+               contrastClipPlane,
+               contrastMaximum,
+               contrastMinimum,
+               contrastFactor;
+  private TipToeThiefPostProcessing cameraPostProcessing;
+  private Coroutine currentCoroutine;
 	private bool lightsOn;
 
 	// Use this for initialization
 	void Start () {
 		lightsOn = true;
+    cameraPostProcessing = gameCamera.GetComponent<TipToeThiefPostProcessing>();
 	}
 
   /**
@@ -19,20 +27,45 @@ public class TipToeThiefLogic : MonoBehaviour {
    *  then a black filter is applied on the game, to hide its entities.
    **/
   public void ToggleLights() {
-		lightsOn = !lightsOn;
+    if (currentCoroutine != null)
+		  StopCoroutine(currentCoroutine);
 
     if(lightsOn)
-      UnBlockCamera();
+      currentCoroutine = StartCoroutine("BlockCamera");
     else
-      BlockCamera();
-	}
-
-  private void BlockCamera() {
-    GameCamera.farClipPlane = contrastClipPlane;
+      currentCoroutine = StartCoroutine("UnBlockCamera");
   }
 
-  private void UnBlockCamera() {
-    GameCamera.farClipPlane = normalClipPlane;
+  public void RestartLevel() {
+    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+  }
+
+  private IEnumerator BlockCamera() {
+    while(cameraPostProcessing.Contrast < contrastMaximum) {
+      cameraPostProcessing.Contrast =
+        Mathf.Min(
+          cameraPostProcessing.Contrast + cameraPostProcessing.Contrast * contrastFactor * Time.deltaTime,
+          contrastMaximum
+        );
+
+      yield return null;
+    }
+
+    lightsOn = false;
+  }
+
+  private IEnumerator UnBlockCamera() {
+    while(cameraPostProcessing.Contrast > contrastMinimum) {
+      cameraPostProcessing.Contrast = 
+        Mathf.Max(
+          cameraPostProcessing.Contrast - cameraPostProcessing.Contrast * contrastFactor * Time.deltaTime,
+          contrastMinimum
+        );
+
+      yield return null;
+    }
+
+    lightsOn = true;
   }
 
   public bool IsLightOn() {

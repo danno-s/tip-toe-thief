@@ -51,4 +51,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a221301ff9de81f4c85aa96badde1cd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allotedTime: 2
   handleColor: {r: 0.3973834, g: 0.8695968, b: 0.8867924, a: 0}
