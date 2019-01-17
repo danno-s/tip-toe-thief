@@ -273,7 +273,9 @@ public class TipToeThiefGuardLogic : MonoBehaviour {
   }
 
   private IEnumerator PlayerFound() {
-    StopCoroutine(currentCoroutine);
+    if (currentCoroutine != null)
+      StopCoroutine(currentCoroutine);
+
     currentCoroutine = StartCoroutine("PlayerSpotted");
     guardState = GuardState.PlayerSpotted;
     spriteR.color = Color.black;
