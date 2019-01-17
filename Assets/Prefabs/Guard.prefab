@@ -58,6 +58,7 @@ MonoBehaviour:
   fieldOfView: 45
   investigationDelay: 0.5
   investigationTime: 4
+  canBeDistracted: 1
   playerReference: {fileID: 0}
   gameLogic: {fileID: 0}
   patrolPoints: []

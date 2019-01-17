@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System; 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -13,6 +13,7 @@ public class TipToeThiefGuardLogic : MonoBehaviour {
                fieldOfView,
                investigationDelay,
                investigationTime;
+  public bool canBeDistracted;
   public ChinchillaLogic playerReference;
   public TipToeThiefLogic gameLogic;
   public List<TipToeThiefGuardPatrolPoint> patrolPoints;
@@ -51,17 +52,25 @@ public class TipToeThiefGuardLogic : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
     var vectorToPlayer = playerReference.transform.position - transform.position;
-    if(gameLogic.IsLightOn() && vectorToPlayer.magnitude < sightRange)
-      if(Vector3.Angle(transform.up, vectorToPlayer) < fieldOfView)
-        StartCoroutine("PlayerFound");
+    if(gameLogic.IsLightOn() && vectorToPlayer.magnitude < sightRange) {
+      if(Vector3.Angle(transform.up, vectorToPlayer) < fieldOfView) {
+        // Cast a ray to check there is no wall between the guard and the player.
+        if(!Physics2D.Raycast(transform.position, vectorToPlayer, sightRange, 1 << 8))
+          StartCoroutine("PlayerFound");
+      }
+    }
 	}
+
   public void Distract(Transform distractionTransform) {
+    if(!canBeDistracted)
+      return;
+
     this.distractionTransform = distractionTransform;
     waitTime = 0;
     lastPointOnPatrol = transform.position;
     lastDirectionOnPatrol = transform.up;
 
-    if (guardState != GuardState.Distracted)
+    if (guardState != GuardState.Distracted && currentCoroutine != null)
       StopCoroutine(currentCoroutine);
 
     if (guardState != GuardState.PlayerSpotted)
