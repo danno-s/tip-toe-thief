@@ -16,3 +16,10 @@ public enum GuardState {
   PlayerSpotted,
   Distracted
 }
+
+public enum Direction {
+    Up,
+    Down,
+    Left, 
+    Right
+}
