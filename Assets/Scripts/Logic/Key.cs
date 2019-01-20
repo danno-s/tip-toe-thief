@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class Llave : MonoBehaviour
+public class Key : MonoBehaviour
 {
 
     public Door door;

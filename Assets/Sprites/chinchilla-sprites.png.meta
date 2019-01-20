@@ -47,7 +47,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: -1
+    filterMode: 0
     aniso: -1
     mipBias: -100
     wrapU: 1
@@ -61,7 +61,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 30
+  spritePixelsToUnits: 40
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -79,7 +79,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -90,7 +90,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -104,17 +104,17 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 28
-        width: 23
-        height: 27
+        y: 40
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5916756d54616d548ab82c36b664bb60
+      spriteID: 52d757c6f22894736b623a5580c9f2d7
       vertices: []
       indices: 
       edges: []
@@ -123,18 +123,18 @@ TextureImporter:
       name: chinchilla-sprites_1
       rect:
         serializedVersion: 2
-        x: 30
-        y: 28
-        width: 23
-        height: 27
+        x: 40
+        y: 40
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c7b40d06a45b113489f76b6461119808
+      spriteID: 157489e80ab344546830b2ff79f22539
       vertices: []
       indices: 
       edges: []
@@ -143,18 +143,18 @@ TextureImporter:
       name: chinchilla-sprites_2
       rect:
         serializedVersion: 2
-        x: 62
-        y: 28
-        width: 39
-        height: 27
+        x: 80
+        y: 40
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 64b5b21e0f3c46c469aab6262c9ef51c
+      spriteID: da05831560e7b4e91bf6722d8f2f091f
       vertices: []
       indices: 
       edges: []
@@ -163,18 +163,18 @@ TextureImporter:
       name: chinchilla-sprites_3
       rect:
         serializedVersion: 2
-        x: 108
-        y: 28
-        width: 39
-        height: 27
+        x: 120
+        y: 40
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 49cf4878d55fee64ea35db78ba0b1c34
+      spriteID: a91036ab48a234a339523c5c3723f32e
       vertices: []
       indices: 
       edges: []
@@ -183,18 +183,18 @@ TextureImporter:
       name: chinchilla-sprites_4
       rect:
         serializedVersion: 2
-        x: 167
-        y: 28
-        width: 39
-        height: 27
+        x: 160
+        y: 40
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0a6f180588f6cdc429a00aa01f6c79ea
+      spriteID: c5ff099a07b3248528bb8095b15ad44b
       vertices: []
       indices: 
       edges: []
@@ -203,18 +203,18 @@ TextureImporter:
       name: chinchilla-sprites_5
       rect:
         serializedVersion: 2
-        x: 215
-        y: 28
-        width: 39
-        height: 27
+        x: 200
+        y: 40
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bed80168a6713a2459f991d18d0a6c52
+      spriteID: 83074054afda1432db0d9e1184286773
       vertices: []
       indices: 
       edges: []
@@ -223,18 +223,18 @@ TextureImporter:
       name: chinchilla-sprites_6
       rect:
         serializedVersion: 2
-        x: 264
-        y: 28
-        width: 23
-        height: 27
+        x: 240
+        y: 40
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 122f2c0848b5f614081e9593c177d9c1
+      spriteID: 2140904df28be440ab99d82a36ab6545
       vertices: []
       indices: 
       edges: []
@@ -243,18 +243,18 @@ TextureImporter:
       name: chinchilla-sprites_7
       rect:
         serializedVersion: 2
-        x: 292
-        y: 28
-        width: 23
-        height: 27
+        x: 280
+        y: 40
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cd3005c674b522c4db2929f4832ce9b2
+      spriteID: 927d018c5c5c246dba9b26de95d5e91d
       vertices: []
       indices: 
       edges: []
@@ -265,16 +265,16 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 23
-        height: 27
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5bea2941a9d614b40bab3a1b988d426e
+      spriteID: 9dafb8cf588ac4a3b94140b583907622
       vertices: []
       indices: 
       edges: []
@@ -283,18 +283,18 @@ TextureImporter:
       name: chinchilla-sprites_9
       rect:
         serializedVersion: 2
-        x: 30
+        x: 40
         y: 0
-        width: 23
-        height: 27
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 84f7e3632d250e64b8629327eff3c6fd
+      spriteID: 1771a99cd58444c509b593624e336ccc
       vertices: []
       indices: 
       edges: []
@@ -303,18 +303,18 @@ TextureImporter:
       name: chinchilla-sprites_10
       rect:
         serializedVersion: 2
-        x: 62
+        x: 80
         y: 0
-        width: 39
-        height: 27
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 12d26da8475d87d44a0ea5463848b3bf
+      spriteID: f9c594cb0dfad4d05a18a6584b920f25
       vertices: []
       indices: 
       edges: []
@@ -323,18 +323,18 @@ TextureImporter:
       name: chinchilla-sprites_11
       rect:
         serializedVersion: 2
-        x: 108
+        x: 120
         y: 0
-        width: 39
-        height: 27
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5508e283868698c49b7878c521667ac9
+      spriteID: e3c3e23deee0f40199019d4956c26168
       vertices: []
       indices: 
       edges: []
@@ -343,18 +343,18 @@ TextureImporter:
       name: chinchilla-sprites_12
       rect:
         serializedVersion: 2
-        x: 167
+        x: 160
         y: 0
-        width: 39
-        height: 27
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cb32b7e7c5ac86e47b53bcfe9989a9e7
+      spriteID: 9fb59d0a574a94b44a7ec7ef193447aa
       vertices: []
       indices: 
       edges: []
@@ -363,18 +363,18 @@ TextureImporter:
       name: chinchilla-sprites_13
       rect:
         serializedVersion: 2
-        x: 215
+        x: 200
         y: 0
-        width: 39
-        height: 27
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3cac002130d8eec4ea6f90966f56aa6e
+      spriteID: 4f247f382f4f04bb2a9901e435285ee3
       vertices: []
       indices: 
       edges: []
@@ -383,18 +383,18 @@ TextureImporter:
       name: chinchilla-sprites_14
       rect:
         serializedVersion: 2
-        x: 264
+        x: 240
         y: 0
-        width: 23
-        height: 27
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4c7b4faaba938c44fb6ad2acedf33cfd
+      spriteID: 87bc5fb5542414d948a01d70fcb6ed3d
       vertices: []
       indices: 
       edges: []
@@ -403,18 +403,18 @@ TextureImporter:
       name: chinchilla-sprites_15
       rect:
         serializedVersion: 2
-        x: 292
+        x: 280
         y: 0
-        width: 23
-        height: 27
+        width: 40
+        height: 40
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0949a2e41052cd14998bf6901d9ebdd4
+      spriteID: 8e0f09cbb315249f8a635b6aac9265ba
       vertices: []
       indices: 
       edges: []
@@ -422,7 +422,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 5f4a91542b4e8724d8cfc7d83cd39bc0
+    spriteID: 4169b3b76a7804d228b69408cb593dbc
     vertices: []
     indices: 
     edges: []

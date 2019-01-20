@@ -39,15 +39,12 @@ public class TipToeThiefLogic : MonoBehaviour {
             currentCoroutine = StartCoroutine("UnBlockCamera");
     }
 
-    public void NextLevel() {
-        currentStage++;
-
-        if(stages.Count <= currentStage + 2)
-            return;
-    }
-
     public void RestartLevel() {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        foreach(var tipToeThiefObject in
+            stages[currentStage].GetComponentsInChildren<TipToeThiefResettableObject>())
+        {
+            tipToeThiefObject.Reset();
+        }
     }
 
     private IEnumerator BlockCamera() {

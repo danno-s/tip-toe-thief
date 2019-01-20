@@ -1,0 +1,4 @@
+﻿interface TipToeThiefResettableObject
+{ 
+    void Reset();
+}

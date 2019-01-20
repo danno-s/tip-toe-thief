@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
-public class TipToeThiefGuardLogic : MonoBehaviour {
+public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject {
 
     public float walkSpeed,
                  rotationSpeed,
@@ -30,6 +30,9 @@ public class TipToeThiefGuardLogic : MonoBehaviour {
     private GuardState guardState;
     private Vector3 lastPointOnPatrol, lastDirectionOnPatrol;
 
+    private Vector3 initialPosition;
+    private Quaternion initialRotation;
+
     // Use this for initialization
     void Start() {
         // Initial position
@@ -38,15 +41,12 @@ public class TipToeThiefGuardLogic : MonoBehaviour {
             transform.rotation = patrolPoints[0].transform.rotation;
         }
 
+        initialPosition = transform.position;
+        initialRotation = transform.rotation;
+
         spriteR = GetComponent<SpriteRenderer>();
 
-        currentPatrolPoint = patrolPoints[0];
-
-        guardState = GuardState.Waiting;
-        waitTime = 0;
-        invertedPatrol = false;
-
-        currentCoroutine = StartCoroutine("Waiting");
+        Reset();
     }
 
     // Update is called once per frame
@@ -109,6 +109,20 @@ public class TipToeThiefGuardLogic : MonoBehaviour {
         }
 
         throw new Exception("No next patrol point found, maybe wrong patrol type?");
+    }
+    
+    public void Reset()
+    {
+        if (currentCoroutine != null)
+            StopCoroutine(currentCoroutine);
+
+        currentPatrolPoint = patrolPoints[0];
+
+        guardState = GuardState.Waiting;
+        waitTime = 0;
+        invertedPatrol = false;
+
+        currentCoroutine = StartCoroutine("Waiting");
     }
 
     /*******************************************************

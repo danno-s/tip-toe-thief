@@ -29,7 +29,6 @@ public class TipToeThiefCameraManager : MonoBehaviour {
     public void SetNewCameraPosition(Transform newTransform, float newSize) {
         nextTransform = newTransform;
         nextSize = newSize;
-        gameLogic.NextLevel();
         StartCoroutine("MoveToNewPosition");
     }
 

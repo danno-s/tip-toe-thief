@@ -30,7 +30,6 @@ public class ChinchillaLogic : MonoBehaviour {
     // Debug Settings End
 
     private Rigidbody2D rgbd;
-    private Vector3Int cellPos;
     private bool aimingPebble,
                  postThrowPause,
                  movedLastFrame;
@@ -40,8 +39,6 @@ public class ChinchillaLogic : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        cellPos = GameGrid.WorldToCell(transform.position);
-
         rgbd = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         aimingPebble = false;
@@ -121,9 +118,6 @@ public class ChinchillaLogic : MonoBehaviour {
         }
 
         string clipName= anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
-
-        Debug.Log(movedThisFrame);
-        Debug.Log(movedDirection);
 
         if(movedThisFrame != movedLastFrame || movedDirection != lastMovedDirection) {
             if (movedThisFrame) {
