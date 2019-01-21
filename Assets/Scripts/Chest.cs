@@ -8,13 +8,13 @@ public class Chest : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         GetComponent<Animator>().Play("Open");
+        GetComponent<AudioSource>().Play();
 
-        StartCoroutine("EndLevel");
+        Invoke("EndLevel", 15f);
     }
 
-    public IEnumerator EndLevel()
+    public void EndLevel()
     {
-        yield return new WaitForSeconds(1.5f);
         SceneManager.LoadScene(0);
     }
 }

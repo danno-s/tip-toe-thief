@@ -30,8 +30,7 @@ public class ChinchillaLogic : MonoBehaviour, TipToeThiefResettableObject {
     // Settings Begin
     public float speed,
                  throwingSpeed;
-    public int postThrowPausedFrames,
-               lives;
+    public int lives;
     // Settings End
 
     // Debug Settings Begin
@@ -40,9 +39,7 @@ public class ChinchillaLogic : MonoBehaviour, TipToeThiefResettableObject {
 
     private Rigidbody2D rgbd;
     private AudioSource audiosrc;
-    private bool aimingPebble,
-                 postThrowPause,
-                 movedLastFrame;
+    private bool movedLastFrame;
     private int frameCount;
     private Direction lastMovedDirection;
     private Animator anim;
@@ -80,7 +77,6 @@ public class ChinchillaLogic : MonoBehaviour, TipToeThiefResettableObject {
         rgbd = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         audiosrc = GetComponent<AudioSource>();
-        aimingPebble = false;
         frameCount = 0;
         lastMovedDirection = Direction.Down;
         GameLogic.SetLives(lives);
@@ -97,62 +93,57 @@ public class ChinchillaLogic : MonoBehaviour, TipToeThiefResettableObject {
         Direction movedDirection = lastMovedDirection;
         bool movedThisFrame = false;
 
-        if(!aimingPebble && !postThrowPause) {
-            Vector2 vel = new Vector2(Input.GetAxis("Horizontal") * speed,
-                                        Input.GetAxis("Vertical") * speed);
-            rgbd.velocity = vel;
+        Vector2 vel = new Vector2(Input.GetAxis("Horizontal") * speed,
+                                    Input.GetAxis("Vertical") * speed);
+        rgbd.velocity = vel;
 
 
-            if (vel.magnitude != 0) {
-                // Ángulo entre la horizontal y la velocidad (-180 a 180)
-                float angle = Vector2.SignedAngle(Vector2.right, vel);
+        if (vel.magnitude != 0) {
+            // Ángulo entre la horizontal y la velocidad (-180 a 180)
+            float angle = Vector2.SignedAngle(Vector2.right, vel);
 
-                if(angle > -135 && angle < -45)
-                    movedDirection = Direction.Down;
-                else if(angle > -45 && angle < 45)
-                    movedDirection = Direction.Right;
-                else if(angle > 45 && angle < 135)
-                    movedDirection = Direction.Up;
-                else
-                    movedDirection = Direction.Left;
+            if(angle > -135 && angle < -45)
+                movedDirection = Direction.Down;
+            else if(angle > -45 && angle < 45)
+                movedDirection = Direction.Right;
+            else if(angle > 45 && angle < 135)
+                movedDirection = Direction.Up;
+            else
+                movedDirection = Direction.Left;
 
-                movedThisFrame = true;
-            }
-        }
-
-        if(rgbd.velocity.magnitude != 0)
             movedThisFrame = true;
-
-        if(postThrowPause && !Input.anyKey) {
-            postThrowPause = false;
-            frameCount = 0;
-        } else if(postThrowPause) {
-            frameCount++;
-            if(frameCount >= postThrowPausedFrames) {
-                postThrowPause = false;
-                frameCount = 0;
-            }
-        }
-
-        if(Input.GetKeyDown(KeyCode.X)) {
-            aimingPebble = true;
-            rgbd.velocity = Vector2.zero;
         }
 
         // Lanzar piedra
-        if(Input.GetKeyUp(KeyCode.X) && aimingPebble) {
-            if(Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0) {
-                GameObject pebbleInstance = Instantiate(pebblePrefab, transform);
-                Rigidbody2D pebbleRgbd = pebbleInstance.GetComponent<Rigidbody2D>();
-                pebbleRgbd.velocity = new Vector2(Input.GetAxisRaw("Horizontal") * throwingSpeed,
-                                                  Input.GetAxisRaw("Vertical") * throwingSpeed);
+        if(Input.GetKeyDown(KeyCode.X)) {
 
-                activePebble = pebbleInstance.GetComponent<PebbleLogic>();
-                Destroy(pebbleInstance, 15f);
-                postThrowPause = true;
+            Vector2 pebbleVel;
+
+            switch(movedDirection)
+            {
+                case Direction.Down:
+                    pebbleVel = Vector2.down;
+                    break;
+                case Direction.Right:
+                    pebbleVel = Vector2.right;
+                    break;
+                case Direction.Up:
+                    pebbleVel = Vector2.up;
+                    break;
+                case Direction.Left:
+                    pebbleVel = Vector2.left;
+                    break;
+                default:
+                    pebbleVel = Vector2.right;
+                    break;
             }
 
-            aimingPebble = false;
+            GameObject pebbleInstance = Instantiate(pebblePrefab, transform);
+            Rigidbody2D pebbleRgbd = pebbleInstance.GetComponent<Rigidbody2D>();
+            pebbleRgbd.velocity = pebbleVel * throwingSpeed;
+
+            activePebble = pebbleInstance.GetComponent<PebbleLogic>();
+            Destroy(pebbleInstance, 15f);
         }
 
         // Activar alarma

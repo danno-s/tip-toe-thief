@@ -7,6 +7,7 @@ public class Key : MonoBehaviour, TipToeThiefResettableObject
 {
 
     public Door door;
+    private AudioSource audioSrc;
     private SpriteRenderer rndr;
     private bool activated = false;
 
@@ -19,6 +20,7 @@ public class Key : MonoBehaviour, TipToeThiefResettableObject
     private void Awake()
     {
         rndr = GetComponentInChildren<SpriteRenderer>();
+        audioSrc = GetComponent<AudioSource>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -28,6 +30,7 @@ public class Key : MonoBehaviour, TipToeThiefResettableObject
 
         if (other.gameObject.tag == "Player")
         {
+            audioSrc.Play();
             door.Unlock();
             rndr.enabled = false;
             activated = true;
