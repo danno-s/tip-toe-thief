@@ -3,24 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-public class Key : MonoBehaviour
+public class Key : MonoBehaviour, TipToeThiefResettableObject
 {
 
     public Door door;
-    private float rotateSpeed = 5f;
+    private SpriteRenderer rndr;
+    private bool activated = false;
 
-    public void Update() {
-        transform.Rotate(Vector3.left * rotateSpeed);
+    public void Reset()
+    {
+        activated = false;
+        rndr.enabled = true;
+    }
+
+    private void Awake()
+    {
+        rndr = GetComponentInChildren<SpriteRenderer>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (activated)
+            return;
+
         if (other.gameObject.tag == "Player")
         {
-            print("c");
             door.Unlock();
-            Destroy(gameObject);
+            rndr.enabled = false;
+            activated = true;
         }
     }
 

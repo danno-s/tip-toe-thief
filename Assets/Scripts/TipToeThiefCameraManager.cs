@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
+[RequireComponent(typeof(ChinchillaLogic))]
 public class TipToeThiefCameraManager : MonoBehaviour {
     public TipToeThiefLogic gameLogic;
     public Material material;
-    public float changeSpeed;
-    private float contrast = 1f,
-                  nextSize;
-    private Transform nextTransform;
-    private Camera handledCamera;
+    public ChinchillaLogic player;
+    public float moveSpeed;
+    private float contrast = 1f;
 
     public float Contrast {
         get {
@@ -22,23 +21,19 @@ public class TipToeThiefCameraManager : MonoBehaviour {
         }
     }
 
-    private void Start() {
-        handledCamera = GetComponent<Camera>();
+    private void Start()
+    {
+        transform.position = player.transform.position + Vector3.back * 10;
+
     }
 
-    public void SetNewCameraPosition(Transform newTransform, float newSize) {
-        nextTransform = newTransform;
-        nextSize = newSize;
-        StartCoroutine("MoveToNewPosition");
-    }
-
-    IEnumerator MoveToNewPosition() {
-        while(transform.position != nextTransform.position) {
-            float distanceToNext = (nextTransform.position - transform.position).magnitude;
-            transform.position = Vector3.Lerp(transform.position, nextTransform.position, Time.deltaTime * changeSpeed);
-            handledCamera.orthographicSize = Mathf.Lerp(handledCamera.orthographicSize, nextSize, Time.deltaTime * changeSpeed);
-            yield return null;
-        }
+    private void Update()
+    {
+        transform.position = Vector3.Lerp(
+            transform.position, 
+            player.transform.position + Vector3.back * 10, 
+            Time.deltaTime * moveSpeed
+        );
     }
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination) {

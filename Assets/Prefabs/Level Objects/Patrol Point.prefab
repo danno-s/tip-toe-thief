@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allotedTime: 2
-  handleColor: {r: 1, g: 1, b: 1, a: 0.047058824}
+  handleColor: {r: 0, g: 0, b: 0, a: 0.21568628}

@@ -23,3 +23,9 @@ public enum Direction {
     Left, 
     Right
 }
+
+public enum GameOverCause
+{
+    CaughtByCat,
+    CaughtByOwl
+}

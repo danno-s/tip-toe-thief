@@ -9,7 +9,7 @@ public class Door : MonoBehaviour, TipToeThiefResettableObject
                 playAnimationOnStart,
                 playFlipped;
 
-    private void Start()
+    private void Awake()
     {
         anm = GetComponent<Animator>();
 
@@ -27,19 +27,24 @@ public class Door : MonoBehaviour, TipToeThiefResettableObject
     public void Lock(float normalizedTime = 0f)
     {
         if (!playFlipped)
-            anm.Play("Lock");
+            anm.Play("Lock", -1, normalizedTime);
         else
-            anm.Play("Lock Flipped");
+            anm.Play("Lock Flipped", -1, normalizedTime);
     }
 
     public void Reset()
     {
-        if (playAnimationOnStart)
-        {
-            if (startLocked)
-                Lock();
-            else
-                Unlock();
-        }
+        float normalizedTime = playAnimationOnStart ? 0f : 1.0f;
+
+        if (startLocked)
+            Lock(normalizedTime);
+        else
+            Unlock(normalizedTime);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, transform.up);
     }
 }

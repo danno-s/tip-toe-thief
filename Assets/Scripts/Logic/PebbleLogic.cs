@@ -3,37 +3,77 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(ParticleSystem))]
-public class PebbleLogic : MonoBehaviour, TipToeThiefResettableObject {
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(AudioSource))]
+public class PebbleLogic : MonoBehaviour {
 
-    public float noiseRadius;
+    public float noiseRadius,
+                 particleAngles,
+                 particleSpeed;
+    public GameObject pebbleParticle;
+    public AudioClip throwLong,
+                     throwShort,
+                     crash;
     [HideInInspector]
     public Rigidbody2D rgbd;
-    private ParticleSystem particles;
+    private Animator anm;
+    private AudioSource audiosrc;
     private bool activated;
 
     private void Start() {
         activated = false;
         rgbd = GetComponent<Rigidbody2D>();
-        particles = GetComponent<ParticleSystem>();
+        audiosrc = GetComponent<AudioSource>();
+        anm = GetComponent<Animator>();
+        anm.Play("Flying");
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
         if(activated)
-        return;
-
-        Debug.Log("Pebble collision");
+            return;
     
         foreach (TipToeThiefGuardLogic Guard in Object.FindObjectsOfType<TipToeThiefGuardLogic>())
-            if(Vector3.Distance(transform.position, Guard.transform.position) <= noiseRadius)   
+            if(Vector2.Distance(transform.position, Guard.transform.position) <= noiseRadius)   
                 Guard.Distract(transform);
 
         activated = true;
-        particles.Play();
+        anm.Play("Crash");
+
+
+        for (float i = 0f; i * particleAngles < 360; i++)
+        {
+            PebbleParticle instancedParticle = Instantiate(pebbleParticle, transform).GetComponent<PebbleParticle>();
+            instancedParticle.rgbd.velocity = new Vector2(
+                particleSpeed * Mathf.Cos(i * particleAngles),
+                particleSpeed * Mathf.Sin(i * particleAngles)
+            );
+        }
     }
 
-    public void Reset()
+    public void PlayLongThrow()
     {
-        Destroy(this);
+        StopAndPlay(throwLong);
+    }
+
+    public void PlayShortThrow()
+    {
+        StopAndPlay(throwShort);
+    }
+
+    public void PlayCrash()
+    {
+        StopAndPlay(crash);
+    }
+
+    private void StopAndPlay(AudioClip audioClip)
+    { 
+        audiosrc.Stop();
+        audiosrc.clip = audioClip;
+        audiosrc.Play();
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawSphere(transform.position, noiseRadius);
     }
 }

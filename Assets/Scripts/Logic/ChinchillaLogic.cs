@@ -6,7 +6,8 @@ using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class ChinchillaLogic : MonoBehaviour {
+[RequireComponent(typeof(AudioSource))]
+public class ChinchillaLogic : MonoBehaviour, TipToeThiefResettableObject {
 
     // Game Objects Begin
     public TipToeThiefLogic GameLogic;
@@ -19,31 +20,73 @@ public class ChinchillaLogic : MonoBehaviour {
                       alarmPrefab;
     // Prefabs End
 
+    // Assets Begin
+    public AudioClip leftStepOn,
+                     rightStepOn,
+                     leftStepOff,
+                     rightStepOff;
+    // Assets End
+
     // Settings Begin
     public float speed,
                  throwingSpeed;
-    public int postThrowPausedFrames;
+    public int postThrowPausedFrames,
+               lives;
     // Settings End
 
     // Debug Settings Begin
-    public bool useIntegerMovement;
+    public int debugStage;
     // Debug Settings End
 
     private Rigidbody2D rgbd;
+    private AudioSource audiosrc;
     private bool aimingPebble,
                  postThrowPause,
                  movedLastFrame;
     private int frameCount;
     private Direction lastMovedDirection;
     private Animator anim;
+    private AlarmLogic activeAlarm;
+    private PebbleLogic activePebble;
+
+    public void Reset()
+    {
+        if (activeAlarm != null)
+            Destroy(activeAlarm.gameObject);
+        if (activePebble != null)
+            Destroy(activePebble.gameObject);
+    }
+
+    public void PlayLeftStep()
+    {
+        if (GameLogic.IsLightOn())
+            audiosrc.clip = leftStepOn;
+        else
+            audiosrc.clip = leftStepOff;
+        audiosrc.Play();
+    }
+
+    public void PlayRightStep()
+    {
+        if (GameLogic.IsLightOn())
+            audiosrc.clip = rightStepOn;
+        else
+            audiosrc.clip = rightStepOff;
+        audiosrc.Play();
+    }
 
     // Use this for initialization
     void Start() {
         rgbd = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        audiosrc = GetComponent<AudioSource>();
         aimingPebble = false;
         frameCount = 0;
         lastMovedDirection = Direction.Down;
+        GameLogic.SetLives(lives);
+#if UNITY_EDITOR
+        GameLogic.SetStage(debugStage);
+#endif
     }
 
     // Update is called once per frame
@@ -99,11 +142,12 @@ public class ChinchillaLogic : MonoBehaviour {
         // Lanzar piedra
         if(Input.GetKeyUp(KeyCode.X) && aimingPebble) {
             if(Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0) {
-                Debug.Log("Pebble thrown");
                 GameObject pebbleInstance = Instantiate(pebblePrefab, transform);
                 Rigidbody2D pebbleRgbd = pebbleInstance.GetComponent<Rigidbody2D>();
                 pebbleRgbd.velocity = new Vector2(Input.GetAxisRaw("Horizontal") * throwingSpeed,
                                                   Input.GetAxisRaw("Vertical") * throwingSpeed);
+
+                activePebble = pebbleInstance.GetComponent<PebbleLogic>();
                 Destroy(pebbleInstance, 15f);
                 postThrowPause = true;
             }
@@ -115,6 +159,7 @@ public class ChinchillaLogic : MonoBehaviour {
         if(Input.GetKeyDown(KeyCode.Z)) {
             GameObject alarmInstance = Instantiate(alarmPrefab);
             alarmInstance.transform.position = transform.position;
+            activeAlarm = alarmInstance.GetComponent<AlarmLogic>();
         }
 
         string clipName= anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
@@ -163,5 +208,6 @@ public class ChinchillaLogic : MonoBehaviour {
             lastMovedDirection = movedDirection;
             movedLastFrame = movedThisFrame;
         }
+
     }
 }

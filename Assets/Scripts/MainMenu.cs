@@ -5,16 +5,21 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    public AudioSource audioSrc;
 
-    public void PlayGame()
+
+    public void Update()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-
+        if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
+        {
+            StartCoroutine("StartGame");
+        }
     }
 
-    public void QuitGame()
+    IEnumerator StartGame()
     {
-        Debug.Log("QUIT!");
-        Application.Quit();
+        audioSrc.Play();
+        yield return new WaitForSeconds(0.5f);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 }

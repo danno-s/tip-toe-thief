@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
-public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject {
+[RequireComponent(typeof(Animator))]
+public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject, TipToeThiefEntity {
 
     public float walkSpeed,
                  rotationSpeed,
@@ -21,50 +21,164 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
     public Color waitColor, rotateColor, moveColor, lookColor;
 
     private TipToeThiefGuardPatrolPoint currentPatrolPoint;
-    private SpriteRenderer spriteR;
-    private Coroutine currentCoroutine;
-    private bool invertedPatrol;
+    internal Coroutine currentCoroutine;
+    private bool invertedPatrol,
+                 playerFound,
+                 distracted;
     private float waitTime;
 
-    private Transform distractionTransform;
-    private GuardState guardState;
+    internal Transform distractionTransform;
+    internal GuardState guardState;
     private Vector3 lastPointOnPatrol, lastDirectionOnPatrol;
 
+    internal Vector3 lookingDirection;
+
     private Vector3 initialPosition;
-    private Quaternion initialRotation;
+    private Vector3 initialLookDirection;
+
+    internal Animator anm;
+    private bool movedThisFrame;
+    private Direction lookDirection;
 
     // Use this for initialization
-    void Start() {
+    internal virtual void Start() {
         // Initial position
         if(patrolPoints.Count > 0) {
             transform.position = patrolPoints[0].transform.position;
-            transform.rotation = patrolPoints[0].transform.rotation;
+            lookingDirection = patrolPoints[0].transform.up;
         }
 
         initialPosition = transform.position;
-        initialRotation = transform.rotation;
+        initialLookDirection = lookingDirection;
 
-        spriteR = GetComponent<SpriteRenderer>();
+        anm = GetComponent<Animator>();
+        movedThisFrame = false;
+        distracted = false;
 
         Reset();
     }
 
     // Update is called once per frame
-    void Update() {
-        var vectorToPlayer = playerReference.transform.position - transform.position;
-        if(gameLogic.IsLightOn() && vectorToPlayer.magnitude < sightRange) {
-            if(Vector3.Angle(transform.up, vectorToPlayer) < fieldOfView) {
+    void Update()
+    {
+        Vector2 vectorToPlayer = playerReference.transform.position - transform.position;
+        var col = Color.black;
+        Debug.DrawRay(transform.position, GetSnappedDirection(lookingDirection), Color.magenta);
+        if (gameLogic.IsLightOn() && vectorToPlayer.magnitude < sightRange)
+        {
+            col = Color.blue;
+            if (Mathf.Abs(Vector2.SignedAngle(GetSnappedDirection(lookingDirection), vectorToPlayer)) < fieldOfView / 2f)
+            {
+                col = Color.cyan;
                 // Cast a ray to check there is no wall between the guard and the player.
-                if(!Physics2D.Raycast(transform.position, vectorToPlayer, sightRange, 1 << 8))
+                if (!Physics2D.Raycast(transform.position, vectorToPlayer, sightRange, 1 << 8))
+                {
+                    col = Color.white;
                     StartCoroutine("PlayerFound");
+                }
+            }
+        }
+
+        Debug.DrawRay(transform.position, vectorToPlayer, col);
+        UpdateAnimation();
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        StartCoroutine("PlayerFound");
+    }
+
+    internal virtual Vector3 GetSnappedDirection(Vector3 direction)
+    {
+        float angle = Vector2.SignedAngle(Vector2.right, lookingDirection);
+
+        if (angle > -135 && angle < -45)
+            return Vector3.down;
+        else if (angle > -45 && angle < 45)
+            return Vector3.right;
+        else if (angle > 45 && angle < 135)
+            return Vector3.up;
+        else
+            return Vector3.left;
+    }
+
+
+    public virtual bool IsCat()
+    {
+        return true;
+    }
+
+    public virtual bool IsOwl()
+    {
+        return false;
+    }
+
+    internal virtual void UpdateAnimation()
+    {
+        float angle = Vector2.SignedAngle(Vector2.right, lookingDirection);
+
+        if (angle > -135 && angle < -45)
+            lookDirection = Direction.Down;
+        else if (angle > -45 && angle < 45)
+            lookDirection = Direction.Right;
+        else if (angle > 45 && angle < 135)
+            lookDirection = Direction.Up;
+        else
+            lookDirection = Direction.Left;
+
+        string clipName = anm.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+
+        if (movedThisFrame)
+        {
+            switch (lookDirection)
+            {
+                case Direction.Down:
+                    if (clipName != "MoveDown")
+                        anm.Play("MoveDown");
+                    break;
+                case Direction.Right:
+                    if (clipName != "MoveRight")
+                        anm.Play("MoveRight");
+                    break;
+                case Direction.Up:
+                    if (clipName != "MoveUp")
+                        anm.Play("MoveUp");
+                    break;
+                case Direction.Left:
+                    if (clipName != "MoveLeft")
+                        anm.Play("MoveLeft");
+                    break;
+            }
+        }
+        else
+        {
+            switch (lookDirection)
+            {
+                case Direction.Down:
+                    if (clipName != "IdleDown")
+                        anm.Play("IdleDown");
+                    break;
+                case Direction.Right:
+                    if (clipName != "IdleRight")
+                        anm.Play("IdleRight");
+                    break;
+                case Direction.Up:
+                    if (clipName != "IdleUp")
+                        anm.Play("IdleUp");
+                    break;
+                case Direction.Left:
+                    if (clipName != "IdleLeft")
+                        anm.Play("IdleLeft");
+                    break;
             }
         }
     }
 
     public void Distract(Transform distractionTransform) {
-        if(!canBeDistracted)
+        if(!canBeDistracted || distracted)
             return;
 
+        distracted = true;
         this.distractionTransform = distractionTransform;
         waitTime = 0;
         lastPointOnPatrol = transform.position;
@@ -77,20 +191,24 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
             currentCoroutine = StartCoroutine("Distracted");
     }
 
-    private void RotateTowards(Vector3 vectorToTarget, out float angle) {
+    internal void RotateTowards(Vector3 vectorToTarget, out float angle) {
         RotateTowards(vectorToTarget, 1f, out angle);
     }
 
-    private void RotateTowards(Vector3 vectorToTarget, float speedMultiplier, out float angle) {
-        angle = Vector3.SignedAngle(transform.up, vectorToTarget, Vector3.forward);
+    internal void RotateTowards(Vector3 vectorToTarget, float speedMultiplier, out float angle) {
+        angle = Vector3.SignedAngle(lookingDirection, vectorToTarget, Vector3.forward);
         float rotateAngle;
 
         if(angle < 0)
-            rotateAngle = Mathf.Max(-rotationSpeed * Time.deltaTime, angle);
+            rotateAngle = Mathf.Max(-rotationSpeed * Time.deltaTime * speedMultiplier, angle);
         else
-            rotateAngle = Mathf.Min(rotationSpeed * Time.deltaTime, angle);
+            rotateAngle = Mathf.Min(rotationSpeed * Time.deltaTime * speedMultiplier, angle);
 
-        transform.Rotate(Vector3.forward, rotateAngle);
+        lookingDirection = Quaternion.Euler(0, 0, rotateAngle) * lookingDirection;
+
+        Debug.DrawRay(transform.position, lookingDirection, Color.red);
+
+        Debug.DrawRay(transform.position, vectorToTarget, Color.blue);
     }
 
     private TipToeThiefGuardPatrolPoint GetNextPatrolPoint() {
@@ -121,6 +239,12 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
         guardState = GuardState.Waiting;
         waitTime = 0;
         invertedPatrol = false;
+        playerFound = false;
+        transform.position = initialPosition;
+        transform.rotation = Quaternion.identity;
+        lookingDirection = initialLookDirection;
+
+        UpdateAnimation();
 
         currentCoroutine = StartCoroutine("Waiting");
     }
@@ -134,7 +258,10 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
     private IEnumerator Waiting() {
         guardState = GuardState.Waiting;
 
-        while(waitTime < currentPatrolPoint.allotedTime) {
+        movedThisFrame = false;
+        distracted = false;
+
+        while (waitTime < currentPatrolPoint.allotedTime) {
             waitTime += .1f;
 
             yield return new WaitForSecondsRealtime(.1f);
@@ -148,7 +275,10 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
         float angle = 180;
         guardState = GuardState.RotatingTowards;
 
-        while(angle != 0) {
+        movedThisFrame = false;
+        distracted = false;
+
+        while (angle != 0) {
             RotateTowards(currentPatrolPoint.transform.position - transform.position, out angle);
 
             yield return null;
@@ -160,8 +290,11 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
     private IEnumerator MovingTowards() {
         guardState = GuardState.Moving;
 
-        while(transform.position != currentPatrolPoint.transform.position) {
-            transform.position =
+        movedThisFrame = true;
+        distracted = false;
+
+        while (transform.position != currentPatrolPoint.transform.position) {
+            transform.position = 
               Vector3.MoveTowards(transform.position, currentPatrolPoint.transform.position, walkSpeed * Time.deltaTime);
 
             yield return null;
@@ -174,7 +307,10 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
         float angle = 180;
         guardState = GuardState.LookingTowards;
 
-        while(angle != 0) {
+        movedThisFrame = false;
+        distracted = false;
+
+        while (angle != 0) {
             RotateTowards(currentPatrolPoint.transform.up, out angle);
 
             yield return null;
@@ -192,7 +328,9 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
         }
     }
 
-    private IEnumerator Distracted() {
+    internal virtual IEnumerator Distracted() {
+        movedThisFrame = false;
+
         while(waitTime < investigationDelay) {
             waitTime += .1f;
 
@@ -203,19 +341,26 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
         currentCoroutine = StartCoroutine("LookingAtDistraction");
     }
 
-    private IEnumerator LookingAtDistraction() {
+    internal virtual IEnumerator LookingAtDistraction() {
         float angle = 180;
 
+        movedThisFrame = false;
+
         while(angle != 0) {
-            RotateTowards(distractionTransform.position - transform.position, out angle);
+            if (distractionTransform == null)
+                break;
+
+            RotateTowards(distractionTransform.position - transform.position, 4f, out angle);
             yield return null;
         }
 
         currentCoroutine = StartCoroutine("MovingToDistraction");
     }
 
-    private IEnumerator MovingToDistraction() {
-        while(transform.position != distractionTransform.position) {
+    internal virtual IEnumerator MovingToDistraction() {
+        movedThisFrame = true;
+
+        while(distractionTransform != null && transform.position != distractionTransform.position) {
             transform.position =
               Vector3.MoveTowards(transform.position, distractionTransform.position, walkSpeed * Time.deltaTime);
 
@@ -225,8 +370,10 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
         currentCoroutine = StartCoroutine("InvestigatingDistraction");
     }
 
-    private IEnumerator InvestigatingDistraction() {
+    internal virtual IEnumerator InvestigatingDistraction() {
         Quaternion startRotation = transform.rotation;
+
+        movedThisFrame = false;
 
         while(waitTime < investigationTime) {
             waitTime += Time.deltaTime;
@@ -236,14 +383,18 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
         }
 
         waitTime = 0;
+        distracted = false;
 
         currentCoroutine = StartCoroutine("LookingBack");
     }
 
-    private IEnumerator LookingBack() {
+    internal virtual IEnumerator LookingBack() {
         float angle = 180;
 
-        while(angle != 0) {
+        movedThisFrame = false;
+        distracted = false;
+
+        while (angle != 0) {
             RotateTowards(lastPointOnPatrol - transform.position, out angle);
             yield return null;
         }
@@ -251,8 +402,11 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
         currentCoroutine = StartCoroutine("MovingBack");
     }
 
-    private IEnumerator MovingBack() {
-        while(transform.position != lastPointOnPatrol) {
+    internal virtual IEnumerator MovingBack() {
+        movedThisFrame = true;
+        distracted = false;
+
+        while (transform.position != lastPointOnPatrol) {
             transform.position =
               Vector3.MoveTowards(transform.position, lastPointOnPatrol, walkSpeed * Time.deltaTime);
 
@@ -262,10 +416,12 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
         currentCoroutine = StartCoroutine("RotatingBack");
     }
 
-    private IEnumerator RotatingBack() {
+    internal virtual IEnumerator RotatingBack() {
         float angle = 180;
+        movedThisFrame = false;
+        distracted = false;
 
-        while(angle != 0) {
+        while (angle != 0) {
             RotateTowards(lastDirectionOnPatrol, out angle);
             yield return null;
         }
@@ -287,14 +443,19 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
     }
 
     private IEnumerator PlayerFound() {
+        if (playerFound)
+            yield break;
+
+
+        playerFound = true;
+
         if(currentCoroutine != null)
             StopCoroutine(currentCoroutine);
 
         currentCoroutine = StartCoroutine("PlayerSpotted");
         guardState = GuardState.PlayerSpotted;
-        spriteR.color = Color.black;
         yield return new WaitForSeconds(1.5f);
-        gameLogic.RestartLevel();
+        gameLogic.RestartLevel(this);
     }
 
     /*******************************************************
@@ -303,7 +464,7 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
      *                                                     *
      *******************************************************/
 
-    private void OnDrawGizmos() {
+    internal virtual void OnDrawGizmos() {
 #if UNITY_EDITOR
         switch(guardState) {
             case GuardState.Waiting:
@@ -322,7 +483,7 @@ public class TipToeThiefGuardLogic : MonoBehaviour, TipToeThiefResettableObject 
         Handles.DrawSolidArc(
           transform.position,
           transform.forward,
-          Vector3.RotateTowards(transform.up, transform.right, Mathf.Deg2Rad * fieldOfView / 2, 1),
+          Quaternion.Euler(0, 0, -fieldOfView / 2) * GetSnappedDirection(lookingDirection),
           fieldOfView,
           sightRange
         );
